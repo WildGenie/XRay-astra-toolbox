@@ -74,7 +74,7 @@ def data_op(op, data, scalar, gpu_core, mask=None):
     cfg['Operation'] = op
     cfg['Scalar'] = scalar
     cfg['DataId'] = data
-    if not mask == None:
+    if not mask is None:
         cfg['MaskId'] = mask
     cfg['option']['GPUindex'] = gpu_core
     alg_id = algorithm.create(cfg)
@@ -93,7 +93,7 @@ def add_noise_to_sino(sinogram_in, I0, seed=None):
 
     """
 
-    if not seed==None:
+    if not seed is None:
         curstate = np.random.get_state()
         np.random.seed(seed)
 
@@ -117,7 +117,7 @@ def add_noise_to_sino(sinogram_in, I0, seed=None):
     if not isinstance(sinogram_in, np.ndarray):
         data2d.store(sinogram_in, sinogram_out)
 
-    if not seed==None:
+    if not seed is None:
         np.random.set_state(curstate)
 
     return sinogram_out

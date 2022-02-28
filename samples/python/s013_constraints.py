@@ -53,10 +53,7 @@ rec_id = astra.data2d.create('-vol', vol_geom)
 cfg = astra.astra_dict('SIRT_CUDA')
 cfg['ReconstructionDataId'] = rec_id
 cfg['ProjectionDataId'] = sinogram_id
-cfg['option']={}
-cfg['option']['MinConstraint'] = 0
-cfg['option']['MaxConstraint'] = 1
-
+cfg['option'] = {'MinConstraint': 0, 'MaxConstraint': 1}
 # Create the algorithm object from the configuration structure
 alg_id = astra.algorithm.create(cfg)
 

@@ -48,22 +48,19 @@ except KeyError:
     pass
 
 
-cfgToWrite = 'DEF HAVE_CUDA=' + str(usecuda) + "\n"
+cfgToWrite = f'DEF HAVE_CUDA={usecuda}' + "\n"
 cfgHasToBeUpdated = True
 try:
-    cfg = open('astra/config.pxi','r')
-    cfgIn = cfg.read()
-    cfg.close()
+    with open('astra/config.pxi','r') as cfg:
+        cfgIn = cfg.read()
     if cfgIn==cfgToWrite:
         cfgHasToBeUpdated = False
 except IOError:
     pass
 
 if cfgHasToBeUpdated:
-    cfg = open('astra/config.pxi','w')
-    cfg.write(cfgToWrite)
-    cfg.close()
-
+    with open('astra/config.pxi','w') as cfg:
+        cfg.write(cfgToWrite)
 cmdclass = { }
 ext_modules = [ ]
 

@@ -45,9 +45,7 @@ cfg['ReconstructionDataId'] = rec_id
 cfg['ProjectionDataId'] = sinogram_id
 
 # Use GPU #1 for the reconstruction. (The default is #0.)
-cfg['option'] = {}
-cfg['option']['GPUindex'] = 1
-
+cfg['option'] = {'GPUindex': 1}
 # Run 150 iterations of the algorithm
 alg_id = astra.algorithm.create(cfg)
 astra.algorithm.run(alg_id, 150)

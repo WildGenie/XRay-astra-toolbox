@@ -54,7 +54,7 @@ class LandweberPlugin(astra.plugin.base):
         tv = np.zeros(v.shape, dtype=np.float32)
         ts = np.zeros(s.shape, dtype=np.float32)
         W = self.W
-        for i in range(its):
+        for _ in range(its):
             W.FP(v,out=ts)
             ts -= s # ts = W*v - s
 
@@ -115,8 +115,7 @@ if __name__=='__main__':
     cfg['ProjectorId'] = proj_id
     cfg['ProjectionDataId'] = sid
     cfg['ReconstructionDataId'] = vid
-    cfg['option'] = {}
-    cfg['option']['Relaxation'] = 1.5
+    cfg['option'] = {'Relaxation': 1.5}
     alg_id_rel = astra.algorithm.create(cfg)
     astra.algorithm.run(alg_id_rel, 100)
     rec_rel = astra.data2d.get(vid)

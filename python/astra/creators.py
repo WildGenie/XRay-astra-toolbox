@@ -249,7 +249,7 @@ This method can be called in a number of ways:
     elif intype == 'fanflat_vec':
         if len(args) < 2:
             raise Exception('not enough variables: astra_create_proj_geom(fanflat_vec, det_count, V)')
-        if not args[1].shape[1] == 6:
+        if args[1].shape[1] != 6:
             raise Exception('V should be a Nx6 matrix, with N the number of projections')
         return {'type':'fanflat_vec', 'DetectorCount':args[0], 'Vectors':args[1]}
     elif intype == 'parallel3d':
@@ -263,13 +263,13 @@ This method can be called in a number of ways:
     elif intype == 'cone_vec':
         if len(args) < 3:
             raise Exception('not enough variables: astra_create_proj_geom(cone_vec, det_row_count, det_col_count, V)')
-        if not args[2].shape[1] == 12:
+        if args[2].shape[1] != 12:
             raise Exception('V should be a Nx12 matrix, with N the number of projections')
         return {'type': 'cone_vec','DetectorRowCount':args[0],'DetectorColCount':args[1],'Vectors':args[2]}
     elif intype == 'parallel3d_vec':
         if len(args) < 3:
             raise Exception('not enough variables: astra_create_proj_geom(parallel3d_vec, det_row_count, det_col_count, V)')
-        if not args[2].shape[1] == 12:
+        if args[2].shape[1] != 12:
             raise Exception('V should be a Nx12 matrix, with N the number of projections')
         return {'type': 'parallel3d_vec','DetectorRowCount':args[0],'DetectorColCount':args[1],'Vectors':args[2]}
     elif intype == 'sparse_matrix':
@@ -278,7 +278,7 @@ This method can be called in a number of ways:
                 'not enough variables: astra_create_proj_geom(sparse_matrix, det_width, det_count, angles, matrix_id)')
         return {'type': 'sparse_matrix', 'DetectorWidth': args[0], 'DetectorCount': args[1], 'ProjectionAngles': args[2], 'MatrixID': args[3]}
     else:
-        raise Exception('Error: unknown type ' + intype)
+        raise Exception(f'Error: unknown type {intype}')
 
 
 def create_backprojection(data, proj_id, returnData=True):
@@ -301,11 +301,7 @@ def create_backprojection(data, proj_id, returnData=True):
         sino_id = data
     vol_id = data2d.create('-vol', vol_geom, 0)
 
-    if projector.is_cuda(proj_id):
-        algString = 'BP_CUDA'
-    else:
-        algString = 'BP'
-
+    algString = 'BP_CUDA' if projector.is_cuda(proj_id) else 'BP'
     cfg = astra_dict(algString)
     cfg['ProjectorId'] = proj_id
     cfg['ProjectionDataId'] = sino_id
@@ -317,10 +313,7 @@ def create_backprojection(data, proj_id, returnData=True):
     if isinstance(data, np.ndarray):
         data2d.delete(sino_id)
 
-    if returnData:
-        return vol_id, data2d.get(vol_id)
-    else:
-        return vol_id
+    return (vol_id, data2d.get(vol_id)) if returnData else vol_id
 
 def create_backprojection3d_gpu(data, proj_geom, vol_geom, returnData=True):
     """Create a backprojection of a sinogram (3D) using CUDA.
@@ -353,10 +346,7 @@ def create_backprojection3d_gpu(data, proj_geom, vol_geom, returnData=True):
     if isinstance(data, np.ndarray):
         data3d.delete(sino_id)
 
-    if returnData:
-        return vol_id, data3d.get(vol_id)
-    else:
-        return vol_id
+    return (vol_id, data3d.get(vol_id)) if returnData else vol_id
 
 
 def create_sino(data, proj_id, returnData=True, gpuIndex=None):
@@ -385,10 +375,7 @@ def create_sino(data, proj_id, returnData=True, gpuIndex=None):
     else:
         volume_id = data
     sino_id = data2d.create('-sino', proj_geom, 0)
-    if projector.is_cuda(proj_id):
-        algString = 'FP_CUDA'
-    else:
-        algString = 'FP'
+    algString = 'FP_CUDA' if projector.is_cuda(proj_id) else 'FP'
     cfg = astra_dict(algString)
     cfg['ProjectorId'] = proj_id
     if gpuIndex is not None:
@@ -401,10 +388,7 @@ def create_sino(data, proj_id, returnData=True, gpuIndex=None):
 
     if isinstance(data, np.ndarray):
         data2d.delete(volume_id)
-    if returnData:
-        return sino_id, data2d.get(sino_id)
-    else:
-        return sino_id
+    return (sino_id, data2d.get(sino_id)) if returnData else sino_id
 
 
 
@@ -432,7 +416,7 @@ def create_sino3d_gpu(data, proj_geom, vol_geom, returnData=True, gpuIndex=None)
     sino_id = data3d.create('-sino', proj_geom, 0)
     algString = 'FP3D_CUDA'
     cfg = astra_dict(algString)
-    if not gpuIndex==None:
+    if not gpuIndex is None:
         cfg['option']={'GPUindex':gpuIndex}
     cfg['ProjectionDataId'] = sino_id
     cfg['VolumeDataId'] = volume_id
@@ -442,10 +426,7 @@ def create_sino3d_gpu(data, proj_geom, vol_geom, returnData=True, gpuIndex=None)
 
     if isinstance(data, np.ndarray):
         data3d.delete(volume_id)
-    if returnData:
-        return sino_id, data3d.get(sino_id)
-    else:
-        return sino_id
+    return (sino_id, data3d.get(sino_id)) if returnData else sino_id
 
 
 def create_reconstruction(rec_type, proj_id, sinogram, iterations=1, use_mask='no', mask=np.array([]), use_minc='no', minc=0, use_maxc='no', maxc=255, returnData=True, filterType=None, filterData=None):
@@ -498,9 +479,9 @@ def create_reconstruction(rec_type, proj_id, sinogram, iterations=1, use_mask='n
         else:
             mask_id = mask
         cfg['options']['ReconstructionMaskId'] = mask_id
-    if not filterType == None:
+    if not filterType is None:
         cfg['FilterType'] = filterType
-    if not filterData == None:
+    if not filterData is None:
         if isinstance(filterData, np.ndarray):
             nexpow = int(
                 pow(2, math.ceil(math.log(2 * proj_geom['DetectorCount'], 2))))
@@ -525,13 +506,9 @@ def create_reconstruction(rec_type, proj_id, sinogram, iterations=1, use_mask='n
         data2d.delete(sino_id)
     if use_mask == 'yes' and isinstance(mask, np.ndarray):
         data2d.delete(mask_id)
-    if not filterData == None:
-        if isinstance(filterData, np.ndarray):
-            data2d.delete(filt_id)
-    if returnData:
-        return recon_id, data2d.get(recon_id)
-    else:
-        return recon_id
+    if not filterData is None and isinstance(filterData, np.ndarray):
+        data2d.delete(filt_id)
+    return (recon_id, data2d.get(recon_id)) if returnData else recon_id
 
 
 def create_projector(proj_type, proj_geom, vol_geom):

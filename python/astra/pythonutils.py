@@ -46,14 +46,14 @@ def geom_size(geom, dim=None):
     elif 'GridColCount' in geom:
         # 2D Volume geometry?
         s = (geom['GridRowCount'], geom['GridColCount'])
-    elif geom['type'] == 'parallel' or geom['type'] == 'fanflat':
+    elif geom['type'] in ['parallel', 'fanflat']:
         s = (len(geom['ProjectionAngles']), geom['DetectorCount'])
-    elif geom['type'] == 'parallel3d' or geom['type'] == 'cone':
+    elif geom['type'] in ['parallel3d', 'cone']:
         s = (geom['DetectorRowCount'], len(
             geom['ProjectionAngles']), geom['DetectorColCount'])
     elif geom['type'] == 'fanflat_vec':
         s = (geom['Vectors'].shape[0], geom['DetectorCount'])
-    elif geom['type'] == 'parallel3d_vec' or geom['type'] == 'cone_vec':
+    elif geom['type'] in ['parallel3d_vec', 'cone_vec']:
         s = (geom['DetectorRowCount'], geom[
              'Vectors'].shape[0], geom['DetectorColCount'])
 

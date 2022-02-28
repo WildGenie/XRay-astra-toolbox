@@ -67,7 +67,7 @@ def link(datatype, geometry, data):
     """
     if not isinstance(data,np.ndarray):
         raise ValueError("Input should be a numpy array")
-    if not data.dtype==np.float32:
+    if data.dtype != np.float32:
         raise ValueError("Numpy array should be float32")
     if not (data.flags['C_CONTIGUOUS'] and data.flags['ALIGNED']):
         raise ValueError("Numpy array should be C_CONTIGUOUS and ALIGNED")

@@ -181,7 +181,7 @@ class OpTomo(scipy.sparse.linalg.LinearOperator):
             out = np.zeros(self.sshape,dtype=np.float32)
         sid = self.data_mod.link('-sino',self.pg,out)
 
-        cfg = creators.astra_dict('FP'+self.appendString)
+        cfg = creators.astra_dict(f'FP{self.appendString}')
         cfg['ProjectionDataId'] = sid
         cfg['VolumeDataId'] = vid
         cfg['ProjectorId'] = self.proj_id
@@ -211,7 +211,7 @@ class OpTomo(scipy.sparse.linalg.LinearOperator):
             out = np.zeros(self.vshape,dtype=np.float32)
         vid = self.data_mod.link('-vol',self.vg,out)
 
-        cfg = creators.astra_dict('BP'+self.appendString)
+        cfg = creators.astra_dict(f'BP{self.appendString}')
         cfg['ProjectionDataId'] = sid
         cfg['ReconstructionDataId'] = vid
         cfg['ProjectorId'] = self.proj_id

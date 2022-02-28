@@ -41,9 +41,7 @@ cfg['VolumeDataId'] = phantom_id
 cfg['ProjectionDataId'] = sinogram_id
 
 # Set up 3 rays per detector element
-cfg['option'] = {}
-cfg['option']['DetectorSuperSampling'] = 3
-
+cfg['option'] = {'DetectorSuperSampling': 3}
 alg_id = astra.algorithm.create(cfg)
 astra.algorithm.run(alg_id)
 astra.algorithm.delete(alg_id)
@@ -64,9 +62,7 @@ cfg = astra.astra_dict('SIRT_CUDA')
 cfg['ReconstructionDataId'] = rec_id
 cfg['ProjectionDataId'] = sinogram_id
 # Set up 3 rays per detector element
-cfg['option'] = {}
-cfg['option']['DetectorSuperSampling'] = 3
-
+cfg['option'] = {'DetectorSuperSampling': 3}
 # There is also an option for supersampling during the backprojection step.
 # This should be used if your detector pixels are smaller than the voxels.
 

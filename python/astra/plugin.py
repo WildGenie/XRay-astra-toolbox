@@ -37,10 +37,7 @@ class base(object):
 
     def astra_init(self, cfg):
         args, varargs, varkw, defaults = inspect.getargspec(self.initialize)
-        if not defaults is None:
-            nopt = len(defaults)
-        else:
-            nopt = 0
+        nopt = len(defaults) if defaults is not None else 0
         if nopt>0:
             req = args[2:-nopt]
             opt = args[-nopt:]
@@ -63,10 +60,14 @@ class base(object):
             raise ValueError("Missing required options")
 
         if not cfgKeys.issubset(reqKeys | optKeys):
-            log.warn(self.__class__.__name__ + ": unused configuration option: " + str(list(cfgKeys.difference(reqKeys | optKeys))))
+            log.warn(
+                f'{self.__class__.__name__}: unused configuration option: '
+                + str(list(cfgKeys.difference(reqKeys | optKeys)))
+            )
+
 
         args = [optDict[k] for k in req]
-        kwargs = dict((k,optDict[k]) for k in opt if k in optDict)
+        kwargs = {k: optDict[k] for k in opt if k in optDict}
         self.initialize(cfg, *args, **kwargs)
 
 class ReconstructionAlgorithm2D(base):
